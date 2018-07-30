@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace WindowsFormsGame
@@ -18,6 +19,8 @@ namespace WindowsFormsGame
                 Create(Color.Gray,1400,400,100,60),
                 Create(Color.Gray,1548,81,100,80)
             };
+
+          
 
            AddToForm(form);
         }
@@ -51,5 +54,7 @@ namespace WindowsFormsGame
             foreach (var el in _obstacles)
                 form.Controls.Add(el);
         }
+
+        
     }
 }
