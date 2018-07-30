@@ -1,107 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace WindowsFormsGame
 {
+    enum DIRECTION
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    };
+
     public partial class Form1 : Form
     {
-        Obstacles o = new Obstacles();
-        Unit unit = new Unit();
+        private  Obstacles _obj;
+        private  Unit unit;
+        private  Bullet _blt;
 
-      
-        //private bool horizontal;
-        //private bool vertical;
-        bool flagL = false;
-        bool flagD = false;
         public Form1()
         {
             InitializeComponent();
-            foreach (var el in o._obstacles)
-            {
-                Controls.Add(el);
-            }
-            unit.CreatePlayer();
-            Controls.Add(unit.player);
-
+            unit = new Unit(this);
+            _obj = new Obstacles(this);
         }
-        //private bool Horizontal()
-        //{
-        //    horizontal = true;
-        //    vertical = false;
-        //    return true;
-        //}
-        //private bool Vertical()
-        //{
-        //    horizontal = false;
-        //    vertical = true;
-        //    return true;
-        //}
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            //pictureBox1.Image = Image.FromFile("unit.png");
-            //pictureBox1.SizeMode=PictureBoxSizeMode.AutoSize;
-
             if (e.KeyCode == Keys.D)
             {
-                //Horizontal();
-                unit.Right();
-                flagL = false;
-                //unit.player.Left += speed;
-              //  pictureBox1.Left += speed;
+                 unit.Right(DIRECTION.RIGHT);
             }
 
             if (e.KeyCode == Keys.A)
             {
-                //Horizontal();
-                flagL = true;
-                unit.Left();
-                //unit.player.Left -= speed;
-                //pictureBox1.Left -= speed;
+                unit.Left(DIRECTION.LEFT);
             }
 
             if (e.KeyCode == Keys.W)
             {
-                //Vertical();
-                flagD = true;
-                unit.Up();
-                //unit.player.Top -= speed;
-                //pictureBox1.Top -= speed;
+                unit.Up(DIRECTION.UP);
             }
 
             if (e.KeyCode == Keys.S)
             {
-               
-                //Vertical();
-                flagD = false;
-                unit.Down();
-               // unit.player.Top += speed;
-                //pictureBox1.Top += speed;
+                unit.Down(DIRECTION.DOWN);
             }
 
-            foreach (var el in o._obstacles)
+            if (e.KeyCode == Keys.Space)
             {
-                if ((unit.player.Bounds.IntersectsWith(el.Bounds)) /*& Horizontal()*/)
+                _blt = new Bullet();
+                _blt.Shot(unit.player.Left, unit.player.Top, unit.dir);
+                Controls.Add(_blt.bullet);
+                if (unit.dir == DIRECTION.LEFT)
                 {
-                    if (flagL == true) unit.player.Left += 10; //pictureBox1.Left += 10;
+                    var r = unit.player.Left;
+                }
+            }
+
+            foreach (var el in _obj._obstacles)
+            {
+                if ((unit.player.Bounds.IntersectsWith(el.Bounds)))
+                {
+                    if (unit.dir==DIRECTION.LEFT) unit.player.Left += 10;
                     else
                         unit.player.Left -= 10;
-                    //pictureBox1.Left -= 10;
                 }
-                if ((unit.player.Bounds.IntersectsWith(el.Bounds)) /*& Vertical()*/)
+                if ((unit.player.Bounds.IntersectsWith(el.Bounds)))
                 {
-                    if (flagD == true) unit.player.Top += 10; // pictureBox1.Top += 10;
-                    else unit.player.Top -= 10; // pictureBox1.Top -= 10;
-
+                    if (unit.dir==DIRECTION.UP) unit.player.Top += 10;
+                    else unit.player.Top -= 10;
                 }
-
             }
         }
     }

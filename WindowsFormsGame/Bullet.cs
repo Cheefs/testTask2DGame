@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace WindowsFormsGame
 {
     class Bullet
     {
-        PictureBox _bullet;
+        public PictureBox bullet;
+        //Unit unit = new Unit();
         public Bullet()
         {
-
         }
 
-        public void Shot()
+        public PictureBox Shot(int posX,int posY, DIRECTION dir)
         {
-            _bullet = new PictureBox
+            return bullet = new PictureBox
             {
                 BackColor = Color.Red,
-                Left = 50,
-                Top = 50,
-                SizeMode = PictureBoxSizeMode.AutoSize
+                Left = posX,
+                Top = posY,
+                Width = 53,
+                Height=23
 
             };
         }
