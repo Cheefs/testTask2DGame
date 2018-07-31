@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace WindowsFormsGame
@@ -8,6 +7,8 @@ namespace WindowsFormsGame
     class Obstacles
     {
         public List<PictureBox> _obstacles;
+        public PictureBox obstacle;
+
         public Obstacles( Form form)
         {
             _obstacles = new List<PictureBox>
@@ -19,9 +20,6 @@ namespace WindowsFormsGame
                 Create(Color.Gray,1400,400,100,60),
                 Create(Color.Gray,1548,81,100,80)
             };
-
-          
-
            AddToForm(form);
         }
         /// <summary>
@@ -33,9 +31,9 @@ namespace WindowsFormsGame
         /// <param name="height">Высота обьекта</param>
         /// <param name="width">Ширина обьекта</param>
         /// <returns></returns>
-        private PictureBox Create(Color color, int posX, int posY,int height, int width)
+        public PictureBox Create(Color color, int posX, int posY,int height, int width)
         {
-            return new PictureBox
+            return  obstacle =new PictureBox
             {
                 BackColor = color,
                 Left = posX,
@@ -54,7 +52,5 @@ namespace WindowsFormsGame
             foreach (var el in _obstacles)
                 form.Controls.Add(el);
         }
-
-        
     }
 }

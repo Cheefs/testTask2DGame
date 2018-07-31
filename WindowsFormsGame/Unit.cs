@@ -5,16 +5,18 @@ namespace WindowsFormsGame
 {
     class Unit
     {
-        Image img;
-        readonly Image imgLeft;
-        readonly Image imgUp;
-        readonly Image imgDown;
-        private readonly int speed = 10;
+        private readonly Image imgRight;
+        private readonly Image imgLeft;
+        private readonly Image imgUp;
+        private readonly Image imgDown;
+
+        public readonly int speed = 10;
         public PictureBox player;
         public DIRECTION dir;
+
         public Unit(Form form)
         {
-            img = Image.FromFile("unitRight.png");
+            imgRight = Image.FromFile("unitRight.png");
             imgLeft = Image.FromFile("unitLeft.png");
             imgUp = Image.FromFile("unitUp.png");
             imgDown = Image.FromFile("unitDown.png");
@@ -27,7 +29,7 @@ namespace WindowsFormsGame
         {
             player= new PictureBox
             {
-                Image = img,
+                Image = imgRight,
                 Left = 50,
                 Top = 50,
                 SizeMode = PictureBoxSizeMode.AutoSize
@@ -44,7 +46,7 @@ namespace WindowsFormsGame
         {
             this.dir = dir;
             player.Left += speed;
-            player.Image = img;
+            player.Image = imgRight;
         }
         public virtual void Up(DIRECTION dir)
         {
