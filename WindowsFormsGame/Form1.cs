@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using System;
 
 namespace WindowsFormsGame
 {
@@ -10,13 +11,12 @@ namespace WindowsFormsGame
         DOWN
     };
 
-    public partial class Form1 : Form
+    partial class Form1 : Form
     {
-        private  Obstacles _obj;
-        private  Unit _unit;
-        private Bullet _blt;
-        private CPU _cpu;
-    
+        public Obstacles _obj;
+        public Unit _unit;
+        public Bullet _blt;
+        public CPU _cpu;
 
         public Form1()
         {
@@ -24,21 +24,19 @@ namespace WindowsFormsGame
 
             this.KeyDown += KeyIsPress;
             this.KeyUp += FireUp;
-           
-            
+
             _obj = new Obstacles(this);
-            _unit = new Unit(this);
+            _unit = new Unit(this);           
             _cpu = new CPU(this);
-           
         }
  
         private void FireUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
-            {
+            { 
                 _blt = new Bullet(this);
-                if (_unit.dir == DIRECTION.LEFT || _unit.dir == DIRECTION.RIGHT) _blt.Shot(_unit.player.Left, _unit.player.Top - 3 + _unit.player.Height / 2, _unit.dir);
-                if (_unit.dir == DIRECTION.UP || _unit.dir == DIRECTION.DOWN) _blt.Shot(_unit.player.Left - 7 + _unit.player.Width / 2, _unit.player.Top, _unit.dir); 
+                if (_unit.dir == DIRECTION.LEFT || _unit.dir == DIRECTION.RIGHT) _blt.Shot(_unit.player.Left + 100, _unit.player.Top - 3 + _unit.player.Height / 2, _unit.dir);
+                if (_unit.dir == DIRECTION.UP || _unit.dir == DIRECTION.DOWN) _blt.Shot(_unit.player.Left - 7 + _unit.player.Width / 2, _unit.player.Top + 100, _unit.dir);
             }
         }
 

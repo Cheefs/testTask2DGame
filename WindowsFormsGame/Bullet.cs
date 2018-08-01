@@ -6,29 +6,24 @@ namespace WindowsFormsGame
 {
     class Bullet
     {
-        public PictureBox bullet;
+        public  PictureBox bullet;
         private readonly int speed = 30;
+        public  DIRECTION dir;
+        private int dx = 5, dy = 5;
 
-        public DIRECTION dir;
-        int dx = 5, dy = 5;
-
-        int TEMPX;
-        int TEMPY;
+        private int tmpX;
+        private  int tmpY;
 
         Timer timer = new Timer();
-        Form form;
+        Form1 form;
 
-        Obstacles _obj;
-
-        public Bullet(Form form)
+        public Bullet(Form1 form)
         {
             this.form = form;
 
             timer.Interval = speed;
             timer.Tick += new EventHandler(TimerFrames);
             timer.Start();
-
-            _obj = new Obstacles(form);
         }
 
         public void Shot(int posX, int posY, DIRECTION dir)
@@ -45,39 +40,36 @@ namespace WindowsFormsGame
             form.Controls.Add(bullet);
         }
 
-        public bool CheckAttack(PictureBox element, PictureBox target)
+        private bool CheckAttack(PictureBox element, PictureBox target)
         {
-            if(target==_obj.obstacle)
+            if(target==form._obj.obstacle)
             {
-                foreach (var el in _obj._obstacles)
+                foreach (var el in form._obj._obstacles)
                 {
                     if ((element.Bounds.IntersectsWith(el.Bounds)))
                     {
-                        TEMPX = bullet.Left;
-                        TEMPY = bullet.Top;
+                        tmpX = bullet.Left;
+                        tmpY = bullet.Top;
                         return true;
                     }
                 }
             }
-            else
-            {
-
-
-                return true;
-            }
-         
             return false;
         }
 
-        public void TimerFrames(Object sender, EventArgs e)
+       private void TimerFrames(Object sender, EventArgs e)
         {
-            CheckAttack(bullet,_obj.obstacle);
+            CheckAttack(bullet,form._obj.obstacle);
             if (dir == DIRECTION.LEFT)
             {
-                if (!(CheckAttack(bullet, _obj.obstacle))) bullet.Left -= speed;
-                else if (CheckAttack(bullet, _obj.obstacle))
+                if (!(CheckAttack(bullet, form._obj.obstacle)))
                 {
-                    Hit(TEMPX + 10, TEMPY, DIRECTION.RIGHT);
+                    form._unit.IsHited();
+                    bullet.Left -= speed;
+                }
+                else if (CheckAttack(bullet, form._obj.obstacle))
+                {
+                    Hit(tmpX + 10, tmpY, DIRECTION.RIGHT);
                     for (int i = 0; i < 5; i++)
                     {
                         dx += i;
@@ -86,18 +78,18 @@ namespace WindowsFormsGame
                         bullet.Top -= dy;
                     }
                 }
-                else
-                {
-
-                }
             }
 
             if (dir == DIRECTION.RIGHT)
             {
-                if (!(CheckAttack(bullet, _obj.obstacle))) bullet.Left += speed;
-                else if (CheckAttack(bullet, _obj.obstacle))
+                if (!(CheckAttack(bullet, form._obj.obstacle)))
                 {
-                    Hit(TEMPX - 10, TEMPY, DIRECTION.LEFT);
+                    form._unit.IsHited();
+                    bullet.Left += speed;
+                }
+                else if (CheckAttack(bullet, form._obj.obstacle))
+                {
+                    Hit(tmpX - 10, tmpY, DIRECTION.LEFT);
                     for (int i = 0; i < 5; i++)
                     {
                         dx += i;
@@ -110,10 +102,14 @@ namespace WindowsFormsGame
 
             if (dir == DIRECTION.UP)
             {
-                if (!(CheckAttack(bullet, _obj.obstacle))) bullet.Top -= speed;
-                else if (CheckAttack(bullet, _obj.obstacle))
+                if (!(CheckAttack(bullet, form._obj.obstacle)))
                 {
-                    Hit(TEMPX, TEMPY + 10, DIRECTION.DOWN);
+                    form._unit.IsHited();
+                    bullet.Top -= speed;
+                }
+                else if (CheckAttack(bullet, form._obj.obstacle))
+                {
+                    Hit(tmpX, tmpY + 10, DIRECTION.DOWN);
                     for (int i = 0; i < 2; i++)
                     {
                         dx += i;
@@ -122,19 +118,18 @@ namespace WindowsFormsGame
                         bullet.Top += dy;
                     }
                 }
-                else
-                {
-
-                }
             }
-
 
             if (dir == DIRECTION.DOWN)
             {
-                if (!(CheckAttack(bullet, _obj.obstacle))) bullet.Top += speed;
-                else if (CheckAttack(bullet, _obj.obstacle))
+                if (!(CheckAttack(bullet, form._obj.obstacle)))
                 {
-                    Hit(TEMPX, TEMPY + 10, DIRECTION.UP);
+                    form._unit.IsHited();
+                    bullet.Top += speed;
+                } 
+                else if (CheckAttack(bullet, form._obj.obstacle))
+                {
+                    Hit(tmpX, tmpY + 10, DIRECTION.UP);
                     for (int i = 0; i < 5; i++)
                     {
                         dx += i;
@@ -143,13 +138,16 @@ namespace WindowsFormsGame
                         bullet.Top -= dy;
                     }
                 }
-                else
-                {
-
-                }
+            }
+            if (  bullet.Left<0 
+                || bullet.Left>form.Width 
+                || bullet.Top < 0 
+                || bullet.Top > form.Height 
+                || (form._unit.IsHited()))
+            {
+                Clear();
             }
         }
-
 
         public void Hit(int x, int y, DIRECTION dir)
         {
@@ -165,5 +163,11 @@ namespace WindowsFormsGame
             bullet.BackColor = Color.DarkBlue;
         }
 
+
+        private void Clear()
+        {
+            bullet.Dispose();
+            timer.Dispose();
+        }
     }
 }
