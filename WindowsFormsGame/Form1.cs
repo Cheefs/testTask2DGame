@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using System;
 
 namespace WindowsFormsGame
 {
@@ -23,21 +22,16 @@ namespace WindowsFormsGame
             InitializeComponent();
 
             this.KeyDown += KeyIsPress;
-            this.KeyUp += FireUp;
+            this.KeyUp += ButtonUp;
 
             _obj = new Obstacles(this);
             _unit = new Unit(this);           
             _cpu = new CPU(this);
         }
  
-        private void FireUp(object sender, KeyEventArgs e)
+        private void ButtonUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Space)
-            { 
-                _blt = new Bullet(this);
-                if (_unit.dir == DIRECTION.LEFT || _unit.dir == DIRECTION.RIGHT) _blt.Shot(_unit.player.Left + 100, _unit.player.Top - 3 + _unit.player.Height / 2, _unit.dir);
-                if (_unit.dir == DIRECTION.UP || _unit.dir == DIRECTION.DOWN) _blt.Shot(_unit.player.Left - 7 + _unit.player.Width / 2, _unit.player.Top + 100, _unit.dir);
-            }
+            if (e.KeyCode == Keys.Space) _unit.Shot(_unit.player,_unit.dir);
         }
 
         private void KeyIsPress(object sender, KeyEventArgs e)
@@ -48,42 +42,8 @@ namespace WindowsFormsGame
             if (e.KeyCode == Keys.W) _unit.Up(DIRECTION.UP);
             if (e.KeyCode == Keys.S) _unit.Down(DIRECTION.DOWN);
        
-            InteractWith(_unit.player,_obj.obstacle);
-            InteractWith(_unit.player, _cpu.player);
+           _unit.InteractWith(_unit.player,_obj.obstacle);
+           _unit.InteractWith(_unit.player, _cpu.player);
         }
-
-        /// <summary>
-        /// Перенести в клас игрок
-        /// 
-        /// </summary>
-        /// <param name="element"></param>
-        public void InteractWith(PictureBox element, PictureBox intersectElement)
-        {
-            if(intersectElement==_obj.obstacle)
-            {
-                foreach (var el in _obj._obstacles)
-                {
-                    if ((element.Bounds.IntersectsWith(el.Bounds)))
-                    {
-                        if (_unit.dir == DIRECTION.LEFT) element.Left += 15;
-                        else if (_unit.dir == DIRECTION.RIGHT) element.Left -= 15;
-                        if (_unit.dir == DIRECTION.UP) element.Top += 15;
-                        else if (_unit.dir == DIRECTION.DOWN) element.Top -= 15;
-                    }
-                }
-            }
-            else
-            {
-                if ((element.Bounds.IntersectsWith(intersectElement.Bounds)))
-                {
-                    if (_unit.dir == DIRECTION.LEFT) element.Left += 15;
-                    else if (_unit.dir == DIRECTION.RIGHT) element.Left -= 15;
-                    if (_unit.dir == DIRECTION.UP) element.Top += 15;
-                    else if (_unit.dir == DIRECTION.DOWN) element.Top -= 15;
-                }
-            }
-           
-        }
-     
     }
 }
