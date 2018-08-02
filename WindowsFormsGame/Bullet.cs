@@ -4,20 +4,26 @@ using System.Windows.Forms;
 
 namespace WindowsFormsGame
 {
+    /// <summary>
+    /// Класс отвечающий за создание, и все зависимости обьекта "Пуля"
+    /// </summary>
     class Bullet
     {
         public PictureBox bullet;
         private readonly int speed = 30;
 
         public DIRECTION dir;
-        int dx = 5, dy = 5;
+        int dx = 5, dy = 5; //Прирост координаты по оси X и оси Y
 
-        int tmpX;
-        int tmpY;
+        int tmpX, tmpY; //Временные ячейки, храняшие данные последних координат пули, перед очисткой и генирацией новой(использщуется для рикошета)
 
-        Timer timer = new Timer();
-        Form1 form;
+        private Timer timer = new Timer();
+        private Form1 form;
 
+        /// <summary>
+        /// Конструктор класса, запускает таймер(обновление обьекта пули)
+        /// </summary>
+        /// <param name="form">форма вывода графических данных</param>
         public Bullet(Form1 form)
         {
             this.form = form;
@@ -26,7 +32,12 @@ namespace WindowsFormsGame
             timer.Tick += new EventHandler(TimerFrames);
             timer.Start();
         }
-
+        /// <summary>
+        /// Стрельба
+        /// </summary>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
+        /// <param name="dir"></param>
         public void Shot(int posX, int posY, DIRECTION dir)
         {
             this.dir = dir;
@@ -41,34 +52,30 @@ namespace WindowsFormsGame
             form.Controls.Add(bullet);
         }
 
-        public bool CheckAttack(PictureBox element/*, PictureBox target*/)
+        public bool CheckAttack(PictureBox element)
         {
-            //if(target==form._obj.obstacle)
-            //{
-                foreach (var el in form._obj._obstacles)
+            foreach (var el in form._obj._obstacles)
+            {
+                if ((element.Bounds.IntersectsWith(el.Bounds)))
                 {
-                    if ((element.Bounds.IntersectsWith(el.Bounds)))
-                    {
-                        tmpX = bullet.Left;
-                        tmpY = bullet.Top;
-                        return true;
-                    }
+                    tmpX = bullet.Left;
+                    tmpY = bullet.Top;
+                    return true;
                 }
-            //}
-
+            }
             return false;
         }
 
-       private bool IsHited( PictureBox obj, ProgressBar pb)
-       { 
+        private bool IsHited(PictureBox obj, ProgressBar pb)
+        {
             if (bullet.Bounds.IntersectsWith(obj.Bounds) & pb.Value > 0)
-            {             
+            {
                 pb.Value -= 10;
                 System.Media.SystemSounds.Exclamation.Play();
                 return true;
             }
             return false;
-       }
+        }
 
         private void Damage()
         {
@@ -79,18 +86,15 @@ namespace WindowsFormsGame
 
         public void TimerFrames(Object sender, EventArgs e)
         {
-            CheckAttack(bullet/*,form._obj.obstacle)*/);
+            CheckAttack(bullet);
             if (dir == DIRECTION.LEFT)
             {
-                if (!(CheckAttack(bullet/*, form._obj.obstacle)*/)))
+                if (!(CheckAttack(bullet)))
                 {
                     Damage();
-                    //form._unit.IsHited();
-                    //form._cpu.IsHited();
-
                     bullet.Left -= speed;
                 }
-                else if (CheckAttack(bullet/*, form._obj.obstacle*/))
+                else if (CheckAttack(bullet))
                 {
                     Hit(tmpX + 10, tmpY, DIRECTION.RIGHT);
                     for (int i = 0; i < 5; i++)
@@ -105,14 +109,12 @@ namespace WindowsFormsGame
 
             if (dir == DIRECTION.RIGHT)
             {
-                if (!(CheckAttack(bullet/*, form._obj.obstacle*/)))
+                if (!(CheckAttack(bullet)))
                 {
                     Damage();
-                    //form._unit.IsHited();
-                    //form._cpu.IsHited();
                     bullet.Left += speed;
                 }
-                else if (CheckAttack(bullet/*, form._obj.obstacle)*/))
+                else if (CheckAttack(bullet))
                 {
                     Hit(tmpX - 10, tmpY, DIRECTION.LEFT);
                     for (int i = 0; i < 5; i++)
@@ -127,15 +129,13 @@ namespace WindowsFormsGame
 
             if (dir == DIRECTION.UP)
             {
-                if (!(CheckAttack(bullet/*, form._obj.obstacle*/)))
+                if (!(CheckAttack(bullet)))
                 {
 
                     Damage();
-                    //form._unit.IsHited();
-                    //form._cpu.IsHited();
                     bullet.Top -= speed;
                 }
-                else if (CheckAttack(bullet/*, form._obj.obstacle*/))
+                else if (CheckAttack(bullet))
                 {
                     Hit(tmpX, tmpY + 10, DIRECTION.DOWN);
                     for (int i = 0; i < 2; i++)
@@ -150,15 +150,12 @@ namespace WindowsFormsGame
 
             if (dir == DIRECTION.DOWN)
             {
-                if (!(CheckAttack(bullet/*, form._obj.obstacle*/)))
+                if (!(CheckAttack(bullet)))
                 {
-
                     Damage();
-                    //form._unit.IsHited();
-                    //form._cpu.IsHited();
                     bullet.Top += speed;
-                } 
-                else if (CheckAttack(bullet/*, form._obj.obstacle*/))
+                }
+                else if (CheckAttack(bullet))
                 {
                     Hit(tmpX, tmpY + 10, DIRECTION.UP);
                     for (int i = 0; i < 5; i++)
@@ -169,17 +166,11 @@ namespace WindowsFormsGame
                         bullet.Top -= dy;
                     }
                 }
-            
             }
-            if(bullet.Left<0 
-                || bullet.Left>form.Width 
-                || bullet.Top < 0 
-                || bullet.Top > form.Height 
-                || IsHited(form._unit.player, form._unit.pb) 
-                || IsHited(form._cpu.player, form._cpu.pb))
-            {
-                Clear();
-            }
+            if (bullet.Left < 0
+                || bullet.Left > form.Width || bullet.Top < 0 || bullet.Top > form.Height
+                || IsHited(form._unit.player, form._unit.pb)|| IsHited(form._cpu.player, form._cpu.pb)) Clear();
+    
         }
 
         public void Hit(int x, int y, DIRECTION dir)

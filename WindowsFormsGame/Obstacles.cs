@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace WindowsFormsGame
 {
+    /// <summary>
+    /// Класс создания препятствий на игровом поле
+    /// </summary>
     class Obstacles
     {
         public List<PictureBox> _obstacles;
@@ -16,22 +19,8 @@ namespace WindowsFormsGame
             Create();
         }
 
-        public void Create()
-        {
-            _obstacles = new List<PictureBox>
-            {
-                AddObstacle(Color.Gray,107,183,271,100),
-                AddObstacle(Color.Gray,724,200,254,270),
-                AddObstacle(Color.Gray,602,837,50,292),
-                AddObstacle(Color.Gray,1600,872,50,100),
-                AddObstacle(Color.Gray,1400,400,100,60),
-                AddObstacle(Color.Gray,1548,81,100,80)
-            };
-            AddToForm(form);
-        }
-
         /// <summary>
-        /// Создание обьектов(препятствий) на основе PictureBox
+        /// Создание обьекта на основе PictureBox
         /// </summary>
         /// <param name="color">Цвет обьекта</param>
         /// <param name="posX">Позиция по оси Х</param>
@@ -49,6 +38,22 @@ namespace WindowsFormsGame
                 Height = height,
                 Width = width
             };
+        }
+        /// <summary>
+        /// Заполнение коллекции препятствий, и вывод их на форму
+        /// </summary>
+        public void Create()
+        {
+            _obstacles = new List<PictureBox>
+            {
+                AddObstacle(Color.Gray,107,183,271,100),
+                AddObstacle(Color.Gray,724,200,254,270),
+                AddObstacle(Color.Gray,602,837,50,292),
+                AddObstacle(Color.Gray,1600,872,50,100),
+                AddObstacle(Color.Gray,1400,400,100,60),
+                AddObstacle(Color.Gray,1548,81,100,80)
+            };
+            AddToForm(form);
         }
 
         /// <summary>

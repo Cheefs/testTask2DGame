@@ -92,17 +92,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\unitDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\unitLeft.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\unitUp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\unitRight.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

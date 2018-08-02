@@ -4,12 +4,17 @@ using System.Media;
 
 namespace WindowsFormsGame
 {
+    /// <summary>
+    /// Класс, логики поведения игрового персонажа
+    /// </summary>
     class Unit
     {
-       protected readonly Image imgRight;
+        #region Resourses
+        protected readonly Image imgRight;
         protected readonly Image imgLeft;
         protected readonly Image imgUp;
         protected readonly Image imgDown;
+        #endregion
 
         public readonly int speed = 10;
         public PictureBox player;
@@ -21,16 +26,20 @@ namespace WindowsFormsGame
         public Unit(Form1 form)
         {
             this.form = form;
-   
+
+        #region Resourses
             imgRight = Image.FromFile("unitRight.png");
             imgLeft = Image.FromFile("unitLeft.png");
             imgUp = Image.FromFile("unitUp.png");
             imgDown = Image.FromFile("unitDown.png");
+            #endregion
 
             Create();
             HealthPoints();
         }
-
+        /// <summary>
+        /// Метод создания персонажа
+        /// </summary>
         public virtual void Create()
         {
             player= new PictureBox
@@ -42,7 +51,9 @@ namespace WindowsFormsGame
             };
             form.Controls.Add(player);
         }
-
+        /// <summary>
+        /// Метод добавления шкалы здоровья
+        /// </summary>
         public virtual void HealthPoints()
         {
             pb = new ProgressBar
@@ -56,18 +67,26 @@ namespace WindowsFormsGame
             };
             form.Controls.Add(pb);
         }
-
+        /// <summary>
+        /// Перемещение игрока в лево
+        /// </summary>
+        /// <param name="dir"> направление</param>
         public virtual void Left(DIRECTION dir)
         {
             this.dir = dir;
             player.Left -= speed;
             player.Image = imgLeft;
+
             if (pb != null)
             {
                 pb.Left = player.Left;
                 pb.Top = player.Top - player.Height / 4;
             }
         }
+        /// <summary>
+        /// Перемещение игрока в право
+        /// </summary>
+        /// <param name="dir"> направление</param>
         public virtual void Right(DIRECTION dir)
         {
             this.dir = dir;
@@ -77,11 +96,14 @@ namespace WindowsFormsGame
 
             if (pb != null)
             {
-                pb.Left = player.Left-30;
+                pb.Left = player.Left;
                 pb.Top = player.Top - player.Height / 4;
             }
-            pb.Left = player.Left;
         }
+        /// <summary>
+        /// Перемещение игрока в верх
+        /// </summary>
+        /// <param name="dir"> направление</param>
         public virtual void Up(DIRECTION dir)
         {
             this.dir = dir;
@@ -91,10 +113,13 @@ namespace WindowsFormsGame
             if (pb != null)
             {
                 pb.Left = player.Left -10;
-                pb.Top = player.Top - player.Height /2;
+                pb.Top = player.Top +100;
             }
-            if (pb != null) pb.Top = player.Top+100;
         }
+        /// <summary>
+        /// Перемещение игрока в низ
+        /// </summary>
+        /// <param name="dir"> направление</param>
         public virtual void Down(DIRECTION dir)
         {
             this.dir = dir;
@@ -107,65 +132,25 @@ namespace WindowsFormsGame
                 pb.Top = player.Top - player.Height/4;
             }
         }
-
+        /// <summary>
+        /// Осуществление стрельбы(коэфициенты подобраны изза кривых картинок, и неудобства PictureBox
+        /// </summary>
+        /// <param name="player">атакующий персонаж</param>
+        /// <param name="dir">направление</param>
         public virtual void Shot(PictureBox player, DIRECTION dir)
         {
             this.dir = dir;
             form._blt = new Bullet(form);
-            if (dir == DIRECTION.LEFT
-                /*|| dir == DIRECTION.RIGHT*/) form._blt.Shot(player.Left-20, player.Top - 3 + player.Height / 2, dir);
-            if (/*dir == DIRECTION.LEFT*/
-               /*||*/ dir == DIRECTION.RIGHT) form._blt.Shot(player.Left+100, player.Top - 3 + player.Height / 2, dir);
-            if (dir == DIRECTION.UP
-                /*|| dir == DIRECTION.DOWN*/) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top - 20, dir);
-            if (/*dir == DIRECTION.UP*/
-               /*||*/ dir == DIRECTION.DOWN) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top + 100, dir);
+            if (dir == DIRECTION.LEFT) form._blt.Shot(player.Left-20, player.Top - 3 + player.Height / 2, dir);
+            if (dir == DIRECTION.RIGHT) form._blt.Shot(player.Left+100, player.Top - 3 + player.Height / 2, dir);
+            if (dir == DIRECTION.UP) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top - 20, dir);
+            if (dir == DIRECTION.DOWN) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top + 100, dir);
         }
-
-        public virtual bool IsHited()
-        {
-            if (form._blt.bullet.Bounds.IntersectsWith(player.Bounds))
-            {
-                if (pb.Value > 0)
-                {
-                    pb.Value -= 10;
-                    SystemSounds.Exclamation.Play();
-                }
-            
-                return true;
-            }
-            //if (form._blt.bullet.Bounds.IntersectsWith(form._cpu.player.Bounds))
-            //{
-            //    if (form._unit.pb.Value > 0)
-            //    {
-            //        form._unit.pb.Value -= 10;
-            //        SystemSounds.Exclamation.Play();
-            //    }
-            //    return true;
-            //}
-
-            //if (target == "unit")
-            //{
-            //    if (form._blt.bullet.Bounds.IntersectsWith(player.Bounds) & form._unit.pb.Value > 0)
-            //    {
-            //        form._unit.pb.Value -= 10;
-            //        SystemSounds.Exclamation.Play();
-            //        return true;
-            //    }
-
-            //}
-            //if (target == "cpu")
-            //{
-            //    if (form._blt.bullet.Bounds.IntersectsWith(form._cpu.player.Bounds) & form._cpu.pb.Value > 0)
-            //    {
-            //        form._cpu.pb.Value -= 10;
-            //        SystemSounds.Exclamation.Play();
-            //        return true;
-            //    }
-            //}
-            return false;
-        }
-
+        /// <summary>
+        /// Столкновение с препядствием/противником
+        /// </summary>
+        /// <param name="element">персонаж</param>
+        /// <param name="intersectElement">обьект столкновения</param>
         public void InteractWith(PictureBox element, PictureBox intersectElement)
         {
             if (intersectElement == form._obj.obstacle)
