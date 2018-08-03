@@ -9,12 +9,11 @@ namespace WindowsFormsGame
     /// </summary>
     class Bullet
     {
-        public PictureBox bullet;
-        private readonly int speed = 30;
-
-        public DIRECTION dir;
+        private IAccess access; //Реализация доступа к полям
+        public PictureBox bullet; //Элемент Пуля
+        private readonly int speed = 30; //Скорость пули
+        public DIRECTION dir;// Направление
         int dx = 5, dy = 5; //Прирост координаты по оси X и оси Y
-
         int tmpX, tmpY; //Временные ячейки, храняшие данные последних координат пули, перед очисткой и генирацией новой(использщуется для рикошета)
 
         private Timer timer = new Timer();
@@ -24,9 +23,11 @@ namespace WindowsFormsGame
         /// Конструктор класса, запускает таймер(обновление обьекта пули)
         /// </summary>
         /// <param name="form">форма вывода графических данных</param>
-        public Bullet(Form1 form)
+        /// /// <param name="access">доступ к данным</param>
+        public Bullet(Form1 form, IAccess access)
         {
             this.form = form;
+            this.access = access;
 
             timer.Interval = speed;
             timer.Tick += new EventHandler(TimerFrames);
@@ -51,10 +52,14 @@ namespace WindowsFormsGame
             };
             form.Controls.Add(bullet);
         }
-
+        /// <summary>
+        /// Проверяет, сопрекосновение пули и препядствий
+        /// </summary>
+        /// <param name="element">Пуля</param>
+        /// <returns> Возвращает истину если столкновение произошло, в противном случае возвращает лож</returns>
         public bool CheckAttack(PictureBox element)
         {
-            foreach (var el in form._obj._obstacles)
+            foreach (var el in access.Obj._obstacles)
             {
                 if ((element.Bounds.IntersectsWith(el.Bounds)))
                 {
@@ -66,32 +71,60 @@ namespace WindowsFormsGame
             return false;
         }
 
+        /// <summary>
+        /// Проверка, не столкнулась ли пуля, с противником/персонажем
+        /// </summary>
+        /// <param name="obj">цель атаки</param>
+        /// <param name="pb">Здоровье цели</param>
+        /// <returns> Возвращает истину если столкновение произошло, в противном случае возвращает лож </returns>
         private bool IsHited(PictureBox obj, ProgressBar pb)
         {
             if (bullet.Bounds.IntersectsWith(obj.Bounds) & pb.Value > 0)
             {
                 pb.Value -= 10;
                 System.Media.SystemSounds.Exclamation.Play();
+             
+            }
+            else if (pb.Value<10)
+            {
+                if (obj == access.Cpu.player)
+                {
+                    access.db.points[0] += 1;
+                    form.Close();
+                }
+
+                if (obj == access.Unit.player)
+                {
+                    access.db.points[1] += 1;
+                    form.Close();
+                }
                 return true;
             }
             return false;
         }
-
-        private void Damage()
+        /// <summary>
+        /// Проверка всех обьектов, на возможность получения урона (чтоб не дублировать много строк)
+        /// </summary>
+        private void Attack()
         {
-            IsHited(form._unit.player, form._unit.pb);
-            IsHited(form._cpu.player, form._cpu.pb);
-
+            IsHited(access.Unit.player, access.Unit.pb);
+            IsHited(access.Cpu.player, access.Cpu.pb);
         }
-
+        /// <summary>
+        /// Отрисовка пули по кадрам, и организация всех ее зависимостей
+        /// </summary>
+        /// <param name="sender"> инициализаток события</param>
+        /// <param name="e"> агрументы события</param>
         public void TimerFrames(Object sender, EventArgs e)
         {
+          
+
             CheckAttack(bullet);
             if (dir == DIRECTION.LEFT)
             {
                 if (!(CheckAttack(bullet)))
                 {
-                    Damage();
+                    Attack();
                     bullet.Left -= speed;
                 }
                 else if (CheckAttack(bullet))
@@ -111,7 +144,7 @@ namespace WindowsFormsGame
             {
                 if (!(CheckAttack(bullet)))
                 {
-                    Damage();
+                    Attack();
                     bullet.Left += speed;
                 }
                 else if (CheckAttack(bullet))
@@ -132,7 +165,7 @@ namespace WindowsFormsGame
                 if (!(CheckAttack(bullet)))
                 {
 
-                    Damage();
+                    Attack();
                     bullet.Top -= speed;
                 }
                 else if (CheckAttack(bullet))
@@ -152,7 +185,7 @@ namespace WindowsFormsGame
             {
                 if (!(CheckAttack(bullet)))
                 {
-                    Damage();
+                    Attack();
                     bullet.Top += speed;
                 }
                 else if (CheckAttack(bullet))
@@ -169,14 +202,32 @@ namespace WindowsFormsGame
             }
             if (bullet.Left < 0
                 || bullet.Left > form.Width || bullet.Top < 0 || bullet.Top > form.Height
-                || IsHited(form._unit.player, form._unit.pb)|| IsHited(form._cpu.player, form._cpu.pb)) Clear();
-    
+                || IsHited(access.Unit.player, access.Unit.pb)|| IsHited(access.Cpu.player, access.Cpu.pb)) Clear();
+
+
+           
+
         }
 
-        public void Hit(int x, int y, DIRECTION dir)
+
+        /// <summary>
+        /// Очистка стека от пули, и таймера
+        /// </summary>
+        public void Clear()
         {
             bullet.Dispose();
             timer.Dispose();
+        }
+
+        /// <summary>
+        /// Действие при попадании пули в препятствие
+        /// </summary>
+        /// <param name="x"> Позиция Х пули при столкновении</param>
+        /// <param name="y">Позиция Y пули при столкновении </param>
+        /// <param name="dir"> Направление пули при столкновении</param>
+        public void Hit(int x, int y, DIRECTION dir)
+        {
+            Clear();
 
             Shot(x, y, dir);
             timer.Interval = speed;
@@ -187,11 +238,5 @@ namespace WindowsFormsGame
             bullet.BackColor = Color.DarkBlue;
         }
 
-
-        public void Clear()
-        {
-            bullet.Dispose();
-            timer.Dispose();
-        }
     }
 }

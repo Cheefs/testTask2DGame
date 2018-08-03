@@ -1,34 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Media;
-using System.Drawing;
-
-
 
 namespace WindowsFormsGame
 {
-    
+    /// <summary>
+    /// Класс персонажа управляемого компьютером, наследование от персонажа
+    /// </summary>
     class CPU : Unit
     {
-        Timer tm = new Timer();
-        string flag;
-        int correctiveCoef = 300;
+        /// <summary>
+        /// Организация доступа к данным
+        /// </summary>
+        private readonly IAccess access; // 
+        /// <summary>
+        /// Таймер
+        /// </summary>
+        private readonly Timer tm = new Timer();
+        /// <summary>
+        /// Флаг запоминаюший напралвнение игрока при столкновении с препядствием
+        /// </summary>
+        private string flag;
+        /// <summary>
+        /// Корректируюший коеффициент
+        /// </summary>
+        private readonly int correctiveCoef = 30;
 
-
-        public CPU(Form1 form):base(form)
+        /// <summary>
+        /// Конструктор класса, инициализация всей автоматики персонажа
+        /// </summary>
+        /// <param name="form"> форма вывода инфрмации </param>
+        /// <param name="access">реализация доступа к данным </param>
+        public CPU(Form1 form, IAccess access) : base(form, access)
         {
-         
-
-
+            this.access = access;
             tm.Interval = speed;
             tm.Tick += new EventHandler(Automatics);
             tm.Interval = 60;
             tm.Start();
         }
 
+        /// <summary>
+        /// СОздание, и расположение обьекта на карте
+        /// </summary>
         public override void Create()
         {
             player = new PictureBox
@@ -38,84 +51,92 @@ namespace WindowsFormsGame
                 Top = form.Height / 2,
                 SizeMode = PictureBoxSizeMode.AutoSize
             };
-            
             form.Controls.Add(player);
         }
 
+        /// <summary>
+        /// Реализация простой автоматики управления
+        /// </summary>
+        /// <param name="sender">обьект инициализатор события</param>
+        /// <param name="e"> аргументы события</param>
         public void Automatics(object sender, EventArgs e)
         {
-
-            AutoAtack(form._unit.player, player, form._unit.dir);
-
-            if (form._unit.player.Left <= player.Left- correctiveCoef)
+            AutoAtack(form.Unit.player, player, form.Unit.dir);
+            if (!(player.Bounds.IntersectsWith(form.Unit.player.Bounds)))
             {
-                if (Obstacle()) flag = "left";
-                else  Left(DIRECTION.LEFT);
+                if (form.Unit.player.Left <= player.Left - correctiveCoef)
+                {
+                    if (Obstacle()) flag = "left";
+                    else Left(DIRECTION.LEFT);
+                }
+
+                if (form.Unit.player.Left >= player.Left + correctiveCoef)
+                {
+                    if (Obstacle()) flag = "right";
+                    else Right(DIRECTION.RIGHT);
+                }
+
+                if (form.Unit.player.Top >= player.Top + correctiveCoef)
+                {
+                    if (Obstacle()) flag = "down";
+                    else Down(DIRECTION.DOWN);
+                }
+                if (form.Unit.player.Top <= player.Top - correctiveCoef)
+                {
+                    if (Obstacle()) flag = "up";
+                    else Up(DIRECTION.UP);
+                }
             }
 
-            if (form._unit.player.Left >= player.Left + correctiveCoef)
-            {
-                if (Obstacle()) flag = "right";
-                else Right(DIRECTION.RIGHT);
-            }
-
-            if (form._unit.player.Top >= player.Top + correctiveCoef)
-            {
-                if (Obstacle()) flag = "down";
-                else Down(DIRECTION.DOWN);
-            }
-            if (form._unit.player.Top <= player.Top - correctiveCoef)
-            {
-                if (Obstacle()) flag = "up";
-                else Up(DIRECTION.UP);
-            }
-
-           
             Find();
-            CheckDirection();
-
-
-            form.label.Text = $"Позиция X игрока: {form._unit.player.Left.ToString()}\n Позиция Y игрока: {form._unit.player.Top.ToString()}" +
-                $"\n Позиция X противника: {player.Left.ToString()}\n Позиция Y противника: {player.Top.ToString()} " ;
+            access.Pos.Text = $"Позиция X игрока: {access.Unit.player.Left}\n Позиция Y игрока: {access.Unit.player.Top}" +
+                $"\n Позиция X противника: {player.Left}\n Позиция Y противника: {player.Top} ";
         }
 
-
-
+        /// <summary>
+        /// Реализация простой автоматики атаки
+        /// </summary>
+        /// <param name="target">Цель</param>
+        /// <param name="cpuPlayer"> игрок компьютера </param>
+        /// <param name="targetDir"> направление цели </param>
         public void AutoAtack(PictureBox target, PictureBox cpuPlayer, DIRECTION targetDir)
         {
-            if(!(Obstacle()))
+            if (!(Obstacle()))
             {
-                if (target.Left <= cpuPlayer.Left & target.Top < player.Top || target.Left <= cpuPlayer.Left & target.Top < player.Top)
+                if (target.Left - correctiveCoef == cpuPlayer.Left & target.Top < player.Top || target.Left + correctiveCoef == cpuPlayer.Left & target.Top < player.Top ||
+                    target.Left == cpuPlayer.Left & target.Top < player.Top)
                 {
-                    Up(DIRECTION.UP);
+                    player.Image = imgUp;
                     Shot(player, DIRECTION.UP);
+
                 }
-                if (target.Left >= cpuPlayer.Left & target.Top > player.Top || target.Left >= cpuPlayer.Left & target.Top > player.Top)
+                if (target.Left - correctiveCoef == cpuPlayer.Left & target.Top > player.Top || target.Left + correctiveCoef == cpuPlayer.Left & target.Top > player.Top
+                    || target.Left == cpuPlayer.Left & target.Top > player.Top)
                 {
-                    Down(DIRECTION.DOWN);
+                    player.Image = imgDown;
                     Shot(player, DIRECTION.DOWN);
+
                 }
-                if (target.Top <= cpuPlayer.Top & target.Left < player.Left || target.Top <= cpuPlayer.Top & target.Left < player.Left)
+                if (target.Top - correctiveCoef == cpuPlayer.Top & target.Left < player.Left || target.Top + correctiveCoef == cpuPlayer.Top & target.Left < player.Left
+                    || target.Top == cpuPlayer.Top & target.Left < player.Left)
                 {
-                    Left(DIRECTION.LEFT);
+                    player.Image = imgLeft;
                     Shot(player, DIRECTION.LEFT);
+
+
                 }
-                if (target.Top >= cpuPlayer.Top & target.Left > player.Left || target.Top >= cpuPlayer.Top & target.Left > player.Left)
+                if (target.Top - correctiveCoef == cpuPlayer.Top & target.Left > player.Left || target.Top + correctiveCoef == cpuPlayer.Top & target.Left > player.Left
+                    || target.Top == cpuPlayer.Top & target.Left > player.Left)
                 {
-                    Right(DIRECTION.RIGHT);
+                    player.Image = imgRight;
                     Shot(player, DIRECTION.RIGHT);
                 }
             }
         }
 
-        public override void Shot(PictureBox player, DIRECTION dir)
-        {
-            this.player = player;
-            this.dir = dir;
-            base.Shot(player, dir);
-        }
-
-
+        /// <summary>
+        /// При столкновении с препядствием, простой поиск направления
+        /// </summary>
         public void Find()
         {
             if (flag == "left") Up(DIRECTION.UP);
@@ -124,17 +145,14 @@ namespace WindowsFormsGame
             if (flag == "up") Left(DIRECTION.LEFT);
             flag = null;
         }
-
-        public void CheckDirection()
-        {
-            if (form._unit.dir == DIRECTION.RIGHT & form._unit.player.Left < player.Left) dir = DIRECTION.LEFT;
-            if (form._unit.dir == DIRECTION.UP & form._unit.player.Top < player.Top) dir = DIRECTION.DOWN;
-        }
-
+        /// <summary>
+        /// Проверка - было ли столкновение с препядствием
+        /// </summary>
+        /// <returns> Возвращает истинну если столкновение произошло, в противном случае возвращает лож </returns>
         public bool Obstacle()
         {
-            foreach (var el in form._obj._obstacles)
-               if (el.Bounds.IntersectsWith(player.Bounds)) return true;
+            foreach (var el in form.Obj._obstacles)
+                if (el.Bounds.IntersectsWith(player.Bounds)) return true;
             return false;
         }
 

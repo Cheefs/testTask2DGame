@@ -16,38 +16,40 @@ namespace WindowsFormsGame
     /// <summary>
     /// Класс представления игровых елементов
     /// </summary>
-    partial class Form1 : Form
+    partial class Form1 : Form, IAccess
     {
-        public Obstacles _obj;
-        public Unit _unit;
-        public Bullet _blt;
-        public CPU _cpu;
-       public Label label;
+        #region IAccess
+        public Obstacles Obj { get; set; }
+        public Unit Unit { get; set; }
+        public Bullet Blt { get; set; }
+        public CPU Cpu { get; set; }
+        public Label Pos { get; set; }
+        public Label Points { get; set; }
+        public DataBase db { get; set; }
+
+        #endregion
+
+
 
         /// <summary>
         /// Инициализация всех игровых обьектов
         /// </summary>
         public Form1()
-        {
-            label = new Label
-            {
-                AutoSize = true,
-                Left = 780,
-                Top = 280
-            };
-
-
-           Controls.Add(label);
-
+        { 
             InitializeComponent();
-
+           
             this.KeyDown += KeyIsPress;
             this.KeyUp += ButtonUp;
 
-            _obj = new Obstacles(this);
-            _unit = new Unit(this);           
-            _cpu = new CPU(this);
 
+            Obj = new Obstacles(this);
+            Unit = new Unit(this, this);
+            Cpu = new CPU(this, this);
+            db = new DataBase(this);
+
+            UI();
+            FormClosing += delegate { db?.Write(); };
+          
         }
         /// <summary>
         /// Событие отжатия кнопки(как только отпускает пользователь нажатую клавишу)
@@ -56,7 +58,7 @@ namespace WindowsFormsGame
         /// <param name="e">агрументы события</param>
         private void ButtonUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Space) _unit.Shot(_unit.player,_unit.dir);
+            if (e.KeyCode == Keys.Space) Unit.Shot(Unit.player,Unit.dir);
         }
 
         /// <summary>
@@ -67,13 +69,24 @@ namespace WindowsFormsGame
         private void KeyIsPress(object sender, KeyEventArgs e)
         {
 
-            if (e.KeyCode == Keys.D) _unit.Right(DIRECTION.RIGHT);
-            if (e.KeyCode == Keys.A) _unit.Left(DIRECTION.LEFT);
-            if (e.KeyCode == Keys.W) _unit.Up(DIRECTION.UP);
-            if (e.KeyCode == Keys.S) _unit.Down(DIRECTION.DOWN);
+            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right) Unit.Right(DIRECTION.RIGHT);
+            if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left) Unit.Left(DIRECTION.LEFT);
+            if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up) Unit.Up(DIRECTION.UP);
+            if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down) Unit.Down(DIRECTION.DOWN);
        
-           _unit.InteractWith(_unit.player,_obj.obstacle);
-           _unit.InteractWith(_unit.player, _cpu.player);
+           Unit.InteractWith(Unit.player,Obj.obstacle);
+           Unit.InteractWith(Unit.player, Cpu.player);
+        }
+        /// <summary>
+        /// Элементы игрового интерфейса
+        /// </summary>
+        private void UI()
+        {
+            Pos = new Label{ AutoSize = true, Left = 780, Top = 280};
+            //Points = new Label {Text=$"Player: {db?.points[0]}\t CPU: {db?.points[1]}", AutoSize = true, Left = 780,Top = 50};
+            Controls.Add(Points);
+            Controls.Add(Pos);
+           
         }
     }
 }

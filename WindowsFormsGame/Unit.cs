@@ -16,16 +16,18 @@ namespace WindowsFormsGame
         protected readonly Image imgDown;
         #endregion
 
+        private IAccess access;
         public readonly int speed = 10;
         public PictureBox player;
-    
+        public int points = 0; 
         public DIRECTION dir;
         public Form1 form;
         public ProgressBar pb;
 
-        public Unit(Form1 form)
+        public Unit(Form1 form, IAccess access)
         {
             this.form = form;
+            this.access = access;
 
         #region Resourses
             imgRight = Image.FromFile("unitRight.png");
@@ -140,11 +142,13 @@ namespace WindowsFormsGame
         public virtual void Shot(PictureBox player, DIRECTION dir)
         {
             this.dir = dir;
-            form._blt = new Bullet(form);
-            if (dir == DIRECTION.LEFT) form._blt.Shot(player.Left-20, player.Top - 3 + player.Height / 2, dir);
-            if (dir == DIRECTION.RIGHT) form._blt.Shot(player.Left+100, player.Top - 3 + player.Height / 2, dir);
-            if (dir == DIRECTION.UP) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top - 20, dir);
-            if (dir == DIRECTION.DOWN) form._blt.Shot(player.Left - 7 + player.Width / 2, player.Top + 100, dir);
+
+            access.Blt = new Bullet(form,access);
+
+            if (dir == DIRECTION.LEFT) access.Blt.Shot(player.Left-20, player.Top - 3 + player.Height / 2, dir);
+            if (dir == DIRECTION.RIGHT) access.Blt.Shot(player.Left+100, player.Top - 3 + player.Height / 2, dir);
+            if (dir == DIRECTION.UP) access.Blt.Shot(player.Left - 7 + player.Width / 2, player.Top - 20, dir);
+            if (dir == DIRECTION.DOWN) access.Blt.Shot(player.Left - 7 + player.Width / 2, player.Top + 100, dir);
         }
         /// <summary>
         /// Столкновение с препядствием/противником
@@ -153,9 +157,9 @@ namespace WindowsFormsGame
         /// <param name="intersectElement">обьект столкновения</param>
         public void InteractWith(PictureBox element, PictureBox intersectElement)
         {
-            if (intersectElement == form._obj.obstacle)
+            if (intersectElement ==access.Obj.obstacle)
             {
-                foreach (var el in form._obj._obstacles)
+                foreach (var el in access.Obj._obstacles)
                 {
                     if ((element.Bounds.IntersectsWith(el.Bounds)))
                     {
@@ -170,10 +174,10 @@ namespace WindowsFormsGame
             {
                 if ((element.Bounds.IntersectsWith(intersectElement.Bounds)))
                 {
-                    if (dir == DIRECTION.LEFT) element.Left += 15;
-                    else if (dir == DIRECTION.RIGHT) element.Left -= 15;
-                    if (dir == DIRECTION.UP) element.Top += 15;
-                    else if (dir == DIRECTION.DOWN) element.Top -= 15;
+                    if (dir == DIRECTION.LEFT) element.Left -= 15;
+                    else if (dir == DIRECTION.RIGHT) element.Left += 15;
+                    if (dir == DIRECTION.UP) element.Top -= 15;
+                    else if (dir == DIRECTION.DOWN) element.Top += 15;
                 }
             }
         }
