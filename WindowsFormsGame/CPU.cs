@@ -11,7 +11,7 @@ namespace WindowsFormsGame
         /// <summary>
         /// Организация доступа к данным
         /// </summary>
-        private readonly IAccess access; // 
+        private readonly IAccess access;
         /// <summary>
         /// Таймер
         /// </summary>

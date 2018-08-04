@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using System.Drawing;
 
 namespace WindowsFormsGame
 {
@@ -29,27 +30,24 @@ namespace WindowsFormsGame
 
         #endregion
 
-
-
         /// <summary>
         /// Инициализация всех игровых обьектов
         /// </summary>
         public Form1()
         { 
             InitializeComponent();
-           
+
+            UI();
+
             this.KeyDown += KeyIsPress;
             this.KeyUp += ButtonUp;
-
 
             Obj = new Obstacles(this);
             Unit = new Unit(this, this);
             Cpu = new CPU(this, this);
             db = new DataBase(this);
 
-            UI();
             FormClosing += delegate { db?.Write(); };
-          
         }
         /// <summary>
         /// Событие отжатия кнопки(как только отпускает пользователь нажатую клавишу)
@@ -83,7 +81,9 @@ namespace WindowsFormsGame
         private void UI()
         {
             Pos = new Label{ AutoSize = true, Left = 780, Top = 280};
-            //Points = new Label {Text=$"Player: {db?.points[0]}\t CPU: {db?.points[1]}", AutoSize = true, Left = 780,Top = 50};
+            Points = new Label { AutoSize = true, Left = 740, Top = 230, };
+
+            Points.Font = new Font(Points.Font.FontFamily, 20);
             Controls.Add(Points);
             Controls.Add(Pos);
            

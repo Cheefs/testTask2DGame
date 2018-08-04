@@ -1,38 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+
 
 namespace WindowsFormsGame
 {
+    /// <summary>
+    /// База данных игры (в данный момент организует роль модели, связывая файл с игровым счетом)
+    /// </summary>
     class DataBase
     {
-        private IAccess access;
-        public int [] points;
-
-   
-        private readonly string path = "points.dat";
+       private IAccess access;
+        public List<int> points;
+       private readonly string path = "points.dat";
 
         public DataBase( IAccess access)
         {
-            this.access = access;
+            this.access = access; 
         }
+        /// <summary>
+        /// Записать прогресс в базу данных(в файл)
+        /// </summary>
         public void Write()
         {
-            points= new int[] { access.Unit.points, access.Cpu.points };
-            //File.WriteAllLines(path, points);
+            using (var sr =new StreamWriter(path))
+            {
+                sr.AutoFlush=true;
+                foreach( var el in points)
+                    sr.WriteLine(el);
+            }
         }
 
-        public int Read()
+        /// <summary>
+        /// Считывание информации с файла
+        /// </summary>
+        public void Read()
         {
-           string [] tmp = File.ReadAllLines(path);
+          points = new List<int>();
+          string [] tmp=File.ReadAllLines(path);
+            foreach (var e in tmp)
+                points.Add(Convert.ToInt32(e));
+            access.Points.Text = $"Player: {points[0]}\t CPU: {points[1]}";
 
-            points[0] = Convert.ToInt32(tmp[0]);
-            points[1] = Convert.ToInt32(tmp[1]);
-
-            return points [2];
         }
-
+        /// <summary>
+        /// Очистка игрового счета
+        /// </summary>
+        public void ClearDB()
+        {
+            points = new List<int>() { 0,0};
+            access.Points.Text = $"Player: {points[0]}\t CPU: {points[1]}";
+        }
     }
 }

@@ -9,12 +9,30 @@ namespace WindowsFormsGame
     /// </summary>
     class Bullet
     {
-        private IAccess access; //Реализация доступа к полям
-        public PictureBox bullet; //Элемент Пуля
-        private readonly int speed = 30; //Скорость пули
-        public DIRECTION dir;// Направление
-        int dx = 5, dy = 5; //Прирост координаты по оси X и оси Y
-        int tmpX, tmpY; //Временные ячейки, храняшие данные последних координат пули, перед очисткой и генирацией новой(использщуется для рикошета)
+        /// <summary>
+        /// Реализация доступа к полям
+        /// </summary>
+        private IAccess access; 
+        /// <summary>
+        /// Элемент Пуля
+        /// </summary>
+        public PictureBox bullet; 
+        /// <summary>
+        /// Скорость пули
+        /// </summary>
+        private readonly int speed = 30;
+        /// <summary>
+        /// Направление
+        /// </summary>
+        public DIRECTION dir;
+        /// <summary>
+        /// Прирост координаты по оси X и оси Y
+        /// </summary>
+        int dx = 5, dy = 5;
+        /// <summary>
+        /// Временные ячейки, храняшие данные последних координат пули, перед очисткой и генирацией новой(использщуется для рикошета) 
+        /// </summary>
+        int tmpX, tmpY; 
 
         private Timer timer = new Timer();
         private Form1 form;
@@ -70,6 +88,15 @@ namespace WindowsFormsGame
             }
             return false;
         }
+        /// <summary>
+        /// Выполняется при победе над противником
+        /// </summary>
+        /// <param name="index"></param>
+        public void Destroy(int index)
+        {
+            access.db.points[index] += 1;
+            form.Close();
+        }
 
         /// <summary>
         /// Проверка, не столкнулась ли пуля, с противником/персонажем
@@ -87,17 +114,8 @@ namespace WindowsFormsGame
             }
             else if (pb.Value<10)
             {
-                if (obj == access.Cpu.player)
-                {
-                    access.db.points[0] += 1;
-                    form.Close();
-                }
-
-                if (obj == access.Unit.player)
-                {
-                    access.db.points[1] += 1;
-                    form.Close();
-                }
+                if (obj == access.Cpu.player) Destroy(0);
+                if (obj == access.Unit.player)  Destroy(1);
                 return true;
             }
             return false;
@@ -202,11 +220,9 @@ namespace WindowsFormsGame
             }
             if (bullet.Left < 0
                 || bullet.Left > form.Width || bullet.Top < 0 || bullet.Top > form.Height
-                || IsHited(access.Unit.player, access.Unit.pb)|| IsHited(access.Cpu.player, access.Cpu.pb)) Clear();
+                || IsHited(access.Unit.player, access.Unit.pb)|| IsHited(access.Cpu.player, access.Cpu.pb))
 
-
-           
-
+                Clear();
         }
 
 

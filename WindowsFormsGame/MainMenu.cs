@@ -1,20 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace WindowsFormsGame
 {
-    public partial class MainMenu : Form
+    /// <summary>
+    /// Главное меню игры
+    /// </summary>
+    partial class MainMenu : Form
     {
+        Form1 form;
         public MainMenu()
         {
             InitializeComponent();
+
+            btnPlay.Click += delegate 
+            {
+              DialogResult result =  MessageBox.Show("Весь ваш прогресс будет удален, продолжить?", "Новая игра", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    form = new Form1();
+                    form.db.ClearDB();
+                    form.Show();
+
+                    form.FormClosing += delegate { Visible = true; };
+                }     
+            };
+
+            btnContinue.Click += delegate
+            {
+
+                Visible = false;
+                form = new Form1();
+                form.Show();
+                form.db.Read();
+                form.FormClosing += delegate { Visible = true; };
+               
+            }; 
         }
     }
 }

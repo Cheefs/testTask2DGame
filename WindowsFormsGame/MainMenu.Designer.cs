@@ -29,20 +29,46 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainMenu));
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnPlay = new System.Windows.Forms.Button();
+            this.btnContinue = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // btnPlay
             // 
-            this.button1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button1.Location = new System.Drawing.Point(586, 34);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(147, 36);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Play";
-            this.button1.UseVisualStyleBackColor = false;
+            this.btnPlay.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnPlay.ForeColor = System.Drawing.Color.Lime;
+            this.btnPlay.Location = new System.Drawing.Point(464, 21);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(147, 36);
+            this.btnPlay.TabIndex = 0;
+            this.btnPlay.Text = "Play";
+            this.btnPlay.UseVisualStyleBackColor = false;
+            // 
+            // btnContinue
+            // 
+            this.btnContinue.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnContinue.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnContinue.ForeColor = System.Drawing.Color.Yellow;
+            this.btnContinue.Location = new System.Drawing.Point(464, 63);
+            this.btnContinue.Name = "btnContinue";
+            this.btnContinue.Size = new System.Drawing.Size(147, 36);
+            this.btnContinue.TabIndex = 1;
+            this.btnContinue.Text = "Continue";
+            this.btnContinue.UseVisualStyleBackColor = false;
+            // 
+            // btnExit
+            // 
+            this.btnExit.BackColor = System.Drawing.Color.Black;
+            this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnExit.ForeColor = System.Drawing.Color.Red;
+            this.btnExit.Location = new System.Drawing.Point(464, 105);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(147, 36);
+            this.btnExit.TabIndex = 2;
+            this.btnExit.Text = "Exit Game";
+            this.btnExit.UseVisualStyleBackColor = false;
             // 
             // MainMenu
             // 
@@ -51,8 +77,10 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Controls.Add(this.btnExit);
+            this.Controls.Add(this.btnContinue);
+            this.Controls.Add(this.btnPlay);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "MainMenu";
             this.Text = "MainMenu";
             this.ResumeLayout(false);
@@ -61,6 +89,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button btnContinue;
+        private System.Windows.Forms.Button btnExit;
     }
 }
