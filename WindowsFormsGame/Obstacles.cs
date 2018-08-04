@@ -48,10 +48,10 @@ namespace WindowsFormsGame
             {
                 AddObstacle(Color.Gray,107,183,271,100),
                 AddObstacle(Color.Gray,724,200,254,270),
-                AddObstacle(Color.Gray,602,837,50,292),
-                AddObstacle(Color.Gray,1600,872,50,100),
-                AddObstacle(Color.Gray,1400,400,100,60),
-                AddObstacle(Color.Gray,1548,81,100,80)
+                AddObstacle(Color.Gray,379,536,50,252),
+                AddObstacle(Color.Gray,1080, 58,50,100),
+                AddObstacle(Color.Gray,1080, 408,100,60),
+                AddObstacle(Color.Gray,500,100,100,80)
             };
             AddToForm(form);
         }

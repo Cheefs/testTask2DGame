@@ -45,7 +45,7 @@ namespace WindowsFormsGame
         {
             player= new PictureBox
             {
-                Image = imgRight,
+                Image = imgLeft,
                 Left = 50,
                 Top = 50,
                 SizeMode = PictureBoxSizeMode.AutoSize

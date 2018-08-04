@@ -34,7 +34,9 @@ namespace WindowsFormsGame
                 form.db.Read();
                 form.FormClosing += delegate { Visible = true; };
                
-            }; 
+            };
+
+            btnExit.Click += delegate { Application.Exit(); };
         }
     }
 }
